@@ -8,7 +8,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # ---------- Configuração da API do Google Sheets ----------
 # Caminho para o arquivo JSON com as credenciais da conta de serviço
 CAMINHO_CREDENCIAL = "dappbaseregrasling-999bb55f05e8.json"  # coloque o nome correto do seu arquivo
-ID_PLANILHA = "1qO_3WQkEnDI__xCLT_hsYWg0hYfRWpL2eCCf26QJLrs/edit?gid=0#gid=0"
+ID_PLANILHA = "1qO_3WQkEnDI__xCLT_hsYWg0hYfRWpL2eCCf26QJLrs"
 
 # Função para conectar ao Google Sheets
 @st.cache_resource
