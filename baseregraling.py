@@ -8,7 +8,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # ---------- Configuração da API do Google Sheets ----------
 # Caminho para o arquivo JSON com as credenciais da conta de serviço
 CAMINHO_CREDENCIAL = "dappbaseregrasling-999bb55f05e8.json"  # coloque o nome correto do seu arquivo
-ID_PLANILHA = "1qO_3WQkEnDI__xCLT_hsYWg0hYfRWpL2eCCf26QJLrs"
+ID_PLANILHA = "1qO_3WQkEnDI__xCLT_hsYWg0hYfRWpL2eCCf26QJLrs"  # ID da planilha
 
 
 @st.cache_resource
@@ -131,6 +131,9 @@ with abas[0]:
             nova_linha = [str(projeto).strip(), str(analista).strip(), str(titulo_regra).strip(),
                           str(regra).strip(), str(ferramenta).strip(), str(data or datetime.today().strftime('%Y-%m-%d'))]
             try:
+                # Conectar à planilha
+                sheet = conectar_planilha()
+                
                 # Tente enviar a linha para o Google Sheets
                 sheet.append_row(nova_linha)
                 st.success("Entrada salva com sucesso na planilha do Google Sheets!")
