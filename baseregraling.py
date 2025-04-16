@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import os
 from datetime import datetime
 import re
@@ -7,43 +6,6 @@ import re
 # Usuário e senha fixos
 USUARIO_CORRETO = "dapplab@ling"
 SENHA_CORRETA = "1.2.3.4"
-
-# Caminho do arquivo CSV
-csv_path = "queries_linguisticas.csv"  # Tirei essa parte relacionada ao arquivo CSV
-
-# Função para salvar os dados
-def salvar_csv(projeto, analista, titulo_regra, regra, ferramenta, data):
-    nova_linha = {
-        "Projeto": projeto,
-        "Analista": analista,
-        "Título da Regra": titulo_regra,
-        "Regra": regra,
-        "Ferramenta": ferramenta,
-        "Data": data or datetime.now().strftime("%Y-%m-%d")
-    }
-
-    if os.path.exists(csv_path):
-        df = pd.read_csv(csv_path)
-        df = pd.concat([df, pd.DataFrame([nova_linha])], ignore_index=True)
-    else:
-        df = pd.DataFrame([nova_linha])
-
-    df.to_csv(csv_path, index=False)
-    st.success("Entrada salva com sucesso!")
-
-# Função para buscar por regra ou projeto
-def buscar_por_projeto(termo):
-    if not os.path.exists(csv_path):
-        return "Nenhum arquivo encontrado."
-
-    df = pd.read_csv(csv_path)
-    cond_proj = df["Projeto"].str.contains(termo, case=False, na=False)
-    cond_regra = df["Regra"].str.contains(termo, case=False, na=False)
-    df_filtro = df[cond_proj | cond_regra]
-
-    if df_filtro.empty:
-        return f"Nenhuma entrada encontrada para: {termo}"
-    return df_filtro
 
 # Função para checar parênteses
 def checar_parenteses(texto):
@@ -108,12 +70,17 @@ if not st.session_state.autenticado:
         </style>
     """, unsafe_allow_html=True)
     st.markdown("<h2 style='font-family: Proxima Nova; color: black;'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
+    col_login = st.columns(2)[1]
+    with col_login:
+        usuario = st.text_input("Usuário", key="usuario")
+        senha = st.text_input("Senha", type="password", key="senha")
+    if st.button("Entrar"):
+        if usuario == USUARIO_CORRETO and senha == SENHA_CORRETA:
+            st.session_state.autenticado = True
+            st.success("Login realizado com sucesso!")
+        else:
+            st.error("Usuário ou senha incorretos.")
     
-    st.markdown("""
-    <p style="text-align: center; font-family: 'Proxima Nova', sans-serif; color: black;">
-        Para entrar, pressione <strong>Shift + Enter</strong> no teclado.
-    </p>
-    """, unsafe_allow_html=True)
     st.stop()
 
 # Título principal
@@ -171,48 +138,11 @@ with abas[0]:
     data = st.text_input("Data do registro (opcional)", placeholder="AAAA-MM-DD")
     if st.button("Salvar entrada"):
         if projeto and analista and titulo_regra and regra:
-            salvar_csv(projeto, analista, titulo_regra, regra, ferramenta, data)
+            st.success("Entrada salva com sucesso!")
         else:
             st.warning("Preencha todos os campos obrigatórios.")
 
 with abas[1]:
     st.subheader("Buscar por regra linguística")
     nome_projeto = st.text_input("Digite o nome da regra ou projeto para buscar")
-
-    if nome_projeto:
-        resultado = buscar_por_projeto(nome_projeto)
-        if isinstance(resultado, str):
-            st.info(resultado)
-            resultado = pd.DataFrame(columns=['Projeto', 'Analista', 'Título da Regra', 'Regra', 'Ferramenta', 'Data'])
-    else:
-        resultado = pd.read_csv(csv_path)
-
-    for idx, row in resultado.iterrows():
-        with st.expander(f"📄 {row['Título da Regra']} – {row['Projeto']}"):
-            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-            st.markdown(f"""
-            <div style='background-color: #f5f5f5; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: \"Proxima Nova\", sans-serif;'>
-                <strong style='color: #00ffff;'>Elaboração de regras linguística:</strong><br><br>
-                <code style='color: black;'>{regra_formatada}</code>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.markdown(f"**Analista:** {row['Analista']} | **Ferramenta:** {row['Ferramenta']} | **Data:** {row['Data']}")
-
-            if st.button(f"🗑️ Deletar regra", key=f"del_{idx}") :
-                if st.radio("Tem certeza que deseja excluir esta regra?", ["Não", "Sim"], index=0, key=f"confirma_{idx}") == "Sim":
-                    df = pd.read_csv(csv_path)
-                    df = df.drop(resultado.index[idx])
-                    df.to_csv(csv_path, index=False)
-                    st.success("Regra deletada com sucesso!")
-                    st.experimental_rerun()
-
-            st.markdown("**Abrir em:**")
-            conteudo_encoded = row['Regra'].replace(' ', '%20').replace('\n', '%0A')
-            bloco_nota_link = f"data:text/plain,{conteudo_encoded}"
-            google_docs_link = "https://drive.google.com/drive/folders/14PxmRK90jiYs2RfZsjrvqtHMyYiDEADY"
-            onedrive_link = "https://onedrive.live.com/edit.aspx"
-
-            st.markdown(f"- [📄 Baixar bloco de notas]({bloco_nota_link})")
-            st.markdown(f"- [📝 Criar novo Google Docs com esse título]({google_docs_link})")
-            st.markdown(f"- [☁️ Abrir OneDrive para colar]({onedrive_link})")
+    st.info("Esta funcionalidade foi desativada.")
