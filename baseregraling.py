@@ -57,7 +57,7 @@ def checar_parenteses(texto):
         return "✓ Parênteses balanceados.", "#d4edda"
 
 # Configuração da página
-st.set_page_config(page_title="Banco de dados de regras linguísticas", layout="wide")
+st.set_page_config(page_title="Banco de dados de regras linguísticas", layout="centered")
 
 # Alterando o estilo para manter os textos pretos e o fundo claro
 st.markdown("""
@@ -82,6 +82,13 @@ st.markdown("""
         }
         .stButton > button {
             background-color: #f0f0f0 !important;  /* Fundo claro para botões */
+        }
+        /* Centralizando elementos */
+        .stContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
     </style>
 """, unsafe_allow_html=True)
