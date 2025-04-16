@@ -80,7 +80,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
 # Controle de sessão
 if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
@@ -133,8 +132,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Interface principal
-
-
 st.download_button(
     label="📥 Baixar base de dados CSV",
     data=open(csv_path, "rb") if os.path.exists(csv_path) else b"",
@@ -170,13 +167,13 @@ with abas[0]:
         if ferramenta != "Outra":
             regra_destacada = regra
             if "OR" in op_ativos:
-                regra_destacada = re.sub(r'\\bOR\\b', '<span style="color:green;font-weight:bold">OR</span>', regra_destacada)
+                regra_destacada = re.sub(r'\bOR\b', '<span style="color:green;font-weight:bold">OR</span>', regra_destacada)
             if "AND" in op_ativos:
-                regra_destacada = re.sub(r'\\bAND\\b', '<span style="color:blue;font-weight:bold">AND</span>', regra_destacada)
+                regra_destacada = re.sub(r'\bAND\b', '<span style="color:blue;font-weight:bold">AND</span>', regra_destacada)
             if "NOT" in op_ativos:
-                regra_destacada = re.sub(r'\\bNOT\\b', '<span style="color:red;font-weight:bold">NOT</span>', regra_destacada)
+                regra_destacada = re.sub(r'\bNOT\b', '<span style="color:red;font-weight:bold">NOT</span>', regra_destacada)
             if "NEAR/" in op_ativos:
-                regra_destacada = re.sub(r'\\bNEAR/\\d+\\b', lambda m: f'<span style="color:orange;font-weight:bold">{m.group()}</span>', regra_destacada)
+                regra_destacada = re.sub(r'\bNEAR/\d+\b', lambda m: f'<span style="color:orange;font-weight:bold">{m.group()}</span>', regra_destacada)
             if "~" in op_ativos:
                 regra_destacada = regra_destacada.replace("~", '<span style="color:purple;font-weight:bold">~</span>')
             if "|" in op_ativos:
@@ -209,8 +206,7 @@ with abas[1]:
 
     for idx, row in resultado.iterrows():
         with st.expander(f"📄 {row['Título da Regra']} – {row['Projeto']}"):
-            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('
-', '<br>')
+            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
             st.markdown(f"""
             <div style='background-color: #1e1e1e; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: \"Proxima Nova\", sans-serif;'>
                 <strong style='color: #00ffff;'>Elaboração de regras linguística:</strong><br><br>
@@ -229,9 +225,7 @@ with abas[1]:
                     st.experimental_rerun()
 
             st.markdown("**Abrir em:**")
-
-            conteudo_encoded = row['Regra'].replace(' ', '%20').replace('
-', '%0A')
+            conteudo_encoded = row['Regra'].replace(' ', '%20').replace('\n', '%0A')
             bloco_nota_link = f"data:text/plain,{conteudo_encoded}"
             google_docs_link = "https://drive.google.com/drive/folders/14PxmRK90jiYs2RfZsjrvqtHMyYiDEADY"
             onedrive_link = "https://onedrive.live.com/edit.aspx"
