@@ -59,23 +59,29 @@ def checar_parenteses(texto):
 # Configuração da página
 st.set_page_config(page_title="Banco de dados de regras linguísticas", layout="wide")
 
-# Aplicar fundo preto e estilização geral
+# Alterando o estilo para manter os textos pretos e o fundo claro
 st.markdown("""
     <style>
         html, body, [class*="css"]  {
-            background-color: black !important;
-            color: white !important;
+            background-color: white !important;  /* Fundo claro */
+            color: black !important;  /* Texto preto */
             font-family: 'Proxima Nova', sans-serif !important;
         }
         h1, h2, h3, h4, h5, h6 {
-            color: white !important;
+            color: black !important;  /* Títulos em preto */
         }
         textarea, input, .stButton > button, .stRadio > div {
             font-size: 16px !important;
-            color: white !important;
+            color: black !important;  /* Textos em preto nos campos */
         }
         .stTextInput > div > div > input {
-            background-color: #1e1e1e !important;
+            background-color: #f5f5f5 !important;  /* Fundo claro para inputs */
+        }
+        .stTextArea > div > div > textarea {
+            background-color: #f5f5f5 !important;  /* Fundo claro para text area */
+        }
+        .stButton > button {
+            background-color: #f0f0f0 !important;  /* Fundo claro para botões */
         }
     </style>
 """, unsafe_allow_html=True)
@@ -85,14 +91,14 @@ if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
 
 if not st.session_state.autenticado:
-    st.markdown("""
-<h1 style='font-family: "Proxima Nova", sans-serif; color: white; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
+    st.markdown(""" 
+<h1 style='font-family: "Proxima Nova", sans-serif; color: black; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
 """, unsafe_allow_html=True)
-    st.markdown("""
+    st.markdown(""" 
         <style>
         body {
-            background-color: black;
-            color: white;
+            background-color: white;
+            color: black;
             font-family: 'Proxima Nova', sans-serif;
             text-align: center;
         }
@@ -101,7 +107,7 @@ if not st.session_state.autenticado:
             }
         </style>
     """, unsafe_allow_html=True)
-    st.markdown("<h2 style='font-family: Proxima Nova; color: white;'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-family: Proxima Nova; color: black;'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
     col_login = st.columns(2)[1]
     with col_login:
         usuario = st.text_input("Usuário", key="usuario")
@@ -115,20 +121,9 @@ if not st.session_state.autenticado:
     
     st.stop()
 
-# Captura Ctrl+Enter para login automático
-st.markdown("""
-<script>
-    document.addEventListener("keydown", function(e) {
-        if (e.ctrlKey && e.key === "Enter") {
-            window.parent.postMessage({isStreamlitMessage: true, type: 'streamlit:setComponentValue', key: 'ctrl_enter_triggered', value: true}, '*');
-        }
-    });
-</script>
-""", unsafe_allow_html=True)
-
 # Título principal
-st.markdown("""
-<h1 style='font-family: \"Proxima Nova\", sans-serif; color: white; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
+st.markdown(""" 
+<h1 style='font-family: "Proxima Nova", sans-serif; color: black; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
 """, unsafe_allow_html=True)
 
 # Interface principal
@@ -208,15 +203,15 @@ with abas[1]:
         with st.expander(f"📄 {row['Título da Regra']} – {row['Projeto']}"):
             regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
             st.markdown(f"""
-            <div style='background-color: #1e1e1e; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: \"Proxima Nova\", sans-serif;'>
+            <div style='background-color: #f5f5f5; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: \"Proxima Nova\", sans-serif;'>
                 <strong style='color: #00ffff;'>Elaboração de regras linguística:</strong><br><br>
-                <code style='color: white;'>{regra_formatada}</code>
+                <code style='color: black;'>{regra_formatada}</code>
             </div>
             """, unsafe_allow_html=True)
 
             st.markdown(f"**Analista:** {row['Analista']} | **Ferramenta:** {row['Ferramenta']} | **Data:** {row['Data']}")
 
-            if st.button(f"🗑️ Deletar regra", key=f"del_{idx}"):
+            if st.button(f"🗑️ Deletar regra", key=f"del_{idx}") :
                 if st.radio("Tem certeza que deseja excluir esta regra?", ["Não", "Sim"], index=0, key=f"confirma_{idx}") == "Sim":
                     df = pd.read_csv(csv_path)
                     df = df.drop(resultado.index[idx])
