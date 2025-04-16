@@ -3,11 +3,11 @@ import pandas as pd
 import os
 from datetime import datetime
 import re
-
+ 
 # Usuário e senha fixos
 USUARIO_CORRETO = "dapplab@ling"
 SENHA_CORRETA = "1.2.3.4"
-
+ 
 # Caminho do arquivo CSV
 csv_path = "queries_linguisticas.csv"
 # Banco de dados em memória
@@ -15,7 +15,7 @@ if "banco_dados" not in st.session_state:
     st.session_state.banco_dados = pd.DataFrame(columns=[
         "Projeto", "Analista", "Título da Regra", "Regra", "Ferramenta", "Data"
     ])
-
+ 
 # Função para salvar os dados
 def salvar_csv(projeto, analista, titulo_regra, regra, ferramenta, data):
     nova_linha = {
@@ -47,8 +47,7 @@ def buscar_por_projeto(termo):
 
     df = pd.read_csv(csv_path)
     cond_proj = df["Projeto"].str.contains(termo, case=False, na=False)
-    cond_regra = df["Regra"].str.contains(termo, case=False, na=False)
-    df_filtro = df[cond_proj | cond_regra]
+    df_filtro = df[cond_proj]
 
     if df_filtro.empty:
         return f"Nenhuma entrada encontrada para: {termo}"
@@ -68,8 +67,9 @@ def buscar_por_termo(termo):
 def checar_parenteses(texto):
     abertura = texto.count('(')
     fechamento = texto.count(')')
+    
     if abertura != fechamento:
-        return "⚠️ Parênteses desbalanceados.", "#f8d7da"
+        return "⚠️ Parênteses desbalanceados!", "#f8d7da"
     else:
         return "✓ Parênteses balanceados.", "#d4edda"
 
@@ -104,11 +104,6 @@ if not st.session_state.autenticado:
 
     st.stop()
 
-# Título principal
-st.markdown("""
-<h1 style='font-family: "Proxima Nova", sans-serif; color: white; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
-""", unsafe_allow_html=True)
-
 # Interface principal
 st.download_button(
     label="📥 Baixar base de dados CSV",
@@ -117,17 +112,18 @@ st.download_button(
     mime="text/csv"
 )
 
-# Abas para navegação
+st.markdown("<h1 style='text-align: center;'>📚 Banco de dados de regras linguísticas</h1>", unsafe_allow_html=True)
+
 abas = st.tabs(["Cadastrar nova regra linguística", "Buscar por regra linguística"])
 
 with abas[0]:
     projeto = st.text_input("Projeto")
     analista = st.text_input("Analista")
     titulo_regra = st.text_input("Título da Regra")
-    regra = st.text_area("Regra Linguística Aplicada")
-    ferramenta = st.selectbox("Ferramenta", ["Outra", "Ferramenta 1", "Ferramenta 2"])
-    
+    regra = st.text_area("Regra linguística aplicada")
+    ferramenta = st.selectbox("Ferramenta", ["Outra", "AND", "OR", "NEAR", "~", "|", "NOT"])
     data = st.text_input("Data do registro (opcional)", placeholder="AAAA-MM-DD")
+
     if st.button("Salvar entrada"):
         if projeto and analista and titulo_regra and regra:
             salvar_csv(projeto, analista, titulo_regra, regra, ferramenta, data)
@@ -149,8 +145,15 @@ with abas[1]:
 
     for idx, row in resultado.iterrows():
         with st.expander(f"📄 {row['Título da Regra']} – {row['Projeto']}"):
-            st.markdown(f"**Projeto**: {row['Projeto']}")
-            st.markdown(f"**Regra**: {row['Regra']}")
+            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace(' ', '<br>')
+            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+            st.markdown(f"""
+                <div style='background-color: #1e1e1e; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: "Proxima Nova", sans-serif;'>
+                    <strong style='color: #00ffff;'>Elaboração de regras linguística:</strong><br><br>
+                    {regra_formatada}
+                </div>
+            """, unsafe_allow_html=True)
+
             if st.button(f"🗑️ Deletar regra", key=f"del_{idx}"):
                 if st.radio("Tem certeza que deseja excluir esta regra?", ["Não", "Sim"], index=0, key=f"confirma_{idx}") == "Sim":
                     df = pd.read_csv(csv_path)
@@ -165,6 +168,7 @@ with abas[1]:
             bloco_nota_link = f"data:text/plain,{conteudo_encoded}"
             google_docs_link = "https://drive.google.com/drive/folders/14PxmRK90jiYs2RfZsjrvqtHMyYiDEADY"
             onedrive_link = "https://onedrive.live.com/edit.aspx"
+
             st.markdown(f"- [📄 Baixar bloco de notas]({bloco_nota_link})")
             st.markdown(f"- [📝 Criar novo Google Docs com esse título]({google_docs_link})")
             st.markdown(f"- [☁️ Abrir OneDrive para colar]({onedrive_link})")
