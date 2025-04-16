@@ -59,60 +59,44 @@ def checar_parenteses(texto):
 # Configuração da página
 st.set_page_config(page_title="Banco de dados de regras linguísticas", layout="wide")
 
-# Aplicar fundo preto e estilização geral
-st.markdown("""
-    <style>
-        html, body, [class*="css"]  {
-            background-color: black !important;
-            color: white !important;
-            font-family: 'Proxima Nova', sans-serif !important;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: white !important;
-        }
-        textarea, input, .stButton > button, .stRadio > div {
-            font-size: 16px !important;
-            color: white !important;
-        }
-        .stTextInput > div > div > input {
-            background-color: #1e1e1e !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 # Controle de sessão
 if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
 
 if not st.session_state.autenticado:
     st.markdown("""
-<h1 style='font-family: "Proxima Nova", sans-serif; color: white; text-align: center;'>📚 Banco de dados de regras linguísticas</h1>
-""", unsafe_allow_html=True)
-    st.markdown("""
-        <style>
+    <style>
         body {
-            background-color: black;
-            color: white;
+            background-color: white;
+            color: black;
             font-family: 'Proxima Nova', sans-serif;
-            text-align: center;
         }
-            textarea, input, .stButton > button {
-                font-size: 16px;
-            }
-        </style>
+        .centered {
+            text-align: center;
+            color: black;
+        }
+        input, textarea, .stButton > button {
+            font-size: 16px;
+            color: black !important;
+        }
+    </style>
     """, unsafe_allow_html=True)
-    st.markdown("<h2 style='font-family: Proxima Nova; color: white;'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
-    col_login = st.columns(2)[1]
+
+    st.markdown("<h1 class='centered'>📚 Banco de dados de regras linguísticas</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 class='centered'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
+
+    col_login = st.columns(3)[1]
     with col_login:
         usuario = st.text_input("Usuário", key="usuario")
         senha = st.text_input("Senha", type="password", key="senha")
+
     if st.button("Entrar"):
         if usuario == USUARIO_CORRETO and senha == SENHA_CORRETA:
             st.session_state.autenticado = True
             st.success("Login realizado com sucesso!")
         else:
             st.error("Usuário ou senha incorretos.")
-    
+
     st.stop()
 
 # Captura Ctrl+Enter para login automático
@@ -167,13 +151,13 @@ with abas[0]:
         if ferramenta != "Outra":
             regra_destacada = regra
             if "OR" in op_ativos:
-                regra_destacada = re.sub(r'\bOR\b', '<span style="color:green;font-weight:bold">OR</span>', regra_destacada)
+                regra_destacada = re.sub(r'\\bOR\\b', '<span style="color:green;font-weight:bold">OR</span>', regra_destacada)
             if "AND" in op_ativos:
-                regra_destacada = re.sub(r'\bAND\b', '<span style="color:blue;font-weight:bold">AND</span>', regra_destacada)
+                regra_destacada = re.sub(r'\\bAND\\b', '<span style="color:blue;font-weight:bold">AND</span>', regra_destacada)
             if "NOT" in op_ativos:
-                regra_destacada = re.sub(r'\bNOT\b', '<span style="color:red;font-weight:bold">NOT</span>', regra_destacada)
+                regra_destacada = re.sub(r'\\bNOT\\b', '<span style="color:red;font-weight:bold">NOT</span>', regra_destacada)
             if "NEAR/" in op_ativos:
-                regra_destacada = re.sub(r'\bNEAR/\d+\b', lambda m: f'<span style="color:orange;font-weight:bold">{m.group()}</span>', regra_destacada)
+                regra_destacada = re.sub(r'\\bNEAR/\\d+\\b', lambda m: f'<span style="color:orange;font-weight:bold">{m.group()}</span>', regra_destacada)
             if "~" in op_ativos:
                 regra_destacada = regra_destacada.replace("~", '<span style="color:purple;font-weight:bold">~</span>')
             if "|" in op_ativos:
