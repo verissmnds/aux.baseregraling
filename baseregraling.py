@@ -89,6 +89,12 @@ st.markdown("""
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            width: 100%;
+        }
+        .stForm {
+            width: 100%;
+            max-width: 800px;  /* Limita o tamanho máximo do formulário */
+            margin: 0 auto;  /* Centraliza horizontalmente */
         }
     </style>
 """, unsafe_allow_html=True)
@@ -145,6 +151,8 @@ abas = st.tabs(["Cadastrar nova regra linguística", "Buscar por regra linguíst
 
 with abas[0]:
     st.subheader("Cadastrar nova regra linguística")
+    st.form(key="form_regra")  # Iniciando o formulário
+
     col1, col2 = st.columns(2)
     with col1:
         projeto = st.text_input("Nome do projeto")
@@ -188,7 +196,7 @@ with abas[0]:
         st.markdown(f"<div style='background-color:{cor};padding:10px;border-radius:5px'>{alerta_parenteses}</div>", unsafe_allow_html=True)
 
     data = st.text_input("Data do registro (opcional)", placeholder="AAAA-MM-DD")
-    if st.button("Salvar entrada"):
+    if st.form_submit_button("Salvar entrada"):
         if projeto and analista and titulo_regra and regra:
             salvar_csv(projeto, analista, titulo_regra, regra, ferramenta, data)
         else:
