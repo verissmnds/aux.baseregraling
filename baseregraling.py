@@ -64,6 +64,7 @@ if "autenticado" not in st.session_state:
     st.session_state.autenticado = False
 
 if not st.session_state.autenticado:
+    # Estilos CSS corrigidos para garantir fundo preto e texto branco
     st.markdown("""
     <style>
         body {
@@ -78,19 +79,22 @@ if not st.session_state.autenticado:
         input, textarea, .stButton > button {
             font-size: 16px;
             color: white !important;
+            background-color: black;
+            border: 1px solid #333;
         }
         .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
     </style>
     """, unsafe_allow_html=True)
 
+    # Texto explicativo e formatação centralizada para a tela de login
     st.markdown("<h1 class='centered'>📚 Banco de dados de regras linguísticas</h1>", unsafe_allow_html=True)
     st.markdown("<h2 class='centered'>🔐 Acesso restrito</h2>", unsafe_allow_html=True)
-
     st.markdown("""
     <div class="login-container">
         <p class='centered'>Após clicar em "Entrar", pressione <strong>Shift + Enter</strong> para continuar.</p>
@@ -110,17 +114,6 @@ if not st.session_state.autenticado:
             st.error("Usuário ou senha incorretos.")
 
     st.stop()
-
-# Captura Ctrl+Enter para login automático
-st.markdown("""
-<script>
-    document.addEventListener("keydown", function(e) {
-        if (e.ctrlKey && e.key === "Enter") {
-            window.parent.postMessage({isStreamlitMessage: true, type: 'streamlit:setComponentValue', key: 'ctrl_enter_triggered', value: true}, '*');
-        }
-    });
-</script>
-""", unsafe_allow_html=True)
 
 # Título principal
 st.markdown("""
@@ -201,32 +194,4 @@ with abas[1]:
         resultado = pd.read_csv(csv_path)
 
     for idx, row in resultado.iterrows():
-        with st.expander(f"📄 {row['Título da Regra']} – {row['Projeto']}"):
-            regra_formatada = row['Regra'].replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-            st.markdown(f"""
-            <div style='background-color: #1e1e1e; border-left: 4px solid #3399ff; border-right: 4px solid #3399ff; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-family: \"Proxima Nova\", sans-serif;'>
-                <strong style='color: #00ffff;'>Elaboração de regras linguística:</strong><br><br>
-                <code style='color: white;'>{regra_formatada}</code>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.markdown(f"**Analista:** {row['Analista']} | **Ferramenta:** {row['Ferramenta']} | **Data:** {row['Data']}")
-
-            if st.button(f"🗑️ Deletar regra", key=f"del_{idx}"):
-
-                if st.radio("Tem certeza que deseja excluir esta regra?", ["Não", "Sim"], index=0, key=f"confirma_{idx}") == "Sim":
-                    df = pd.read_csv(csv_path)
-                    df = df.drop(resultado.index[idx])
-                    df.to_csv(csv_path, index=False)
-                    st.success("Regra deletada com sucesso!")
-                    st.experimental_rerun()
-
-            st.markdown("**Abrir em:**")
-            conteudo_encoded = row['Regra'].replace(' ', '%20').replace('\n', '%0A')
-            bloco_nota_link = f"data:text/plain,{conteudo_encoded}"
-            google_docs_link = "https://drive.google.com/drive/folders/14PxmRK90jiYs2RfZsjrvqtHMyYiDEADY"
-            onedrive_link = "https://onedrive.live.com/edit.aspx"
-
-            st.markdown(f"- [📄 Baixar bloco de notas]({bloco_nota_link})")
-            st.markdown(f"- [📝 Criar novo Google Docs com esse título]({google_docs_link})")
-            st.markdown(f"- [☁️ Abrir OneDrive para colar]({onedrive_link})")
+        with st.expander(f"📄 {row['
